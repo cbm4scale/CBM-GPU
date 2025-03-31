@@ -52,10 +52,8 @@ Upon completion, the script generates a results file named `results/matmul_resul
 #### How to Run:
 1. Open the `scripts/matmul.sh` and modify the following variables:
    - `MAX_THREADS=...`  
-     Set this variable to the maximum number of physical cores on your machine.
-   - `THREADS=(...)`  
-     Include in this array the specific thread counts you want to experiment with.  
-
+     Set this variable to the maximum number of physical cores on your CPU - used to accelerate the construction of the CBM format.
+   
 2. Run `./scripts/matmul.sh` inside the `CBM-CPU/` direction.  
 
 Other configuration options (use default values to reproduce our experiments):    
@@ -82,9 +80,7 @@ Again, the alpha values used are the ones set in `benchmark/utilities.py`.
 #### How to Run:
 1. Open the `scripts/validate.sh` and modify the following variables:
    - `MAX_THREADS=...`  
-     Set this variable to the maximum number of physical cores on your machine.
-   - `THREADS=(...)`  
-     Include in this array the specific thread counts you want to experiment with.  
+     Set this variable to the maximum number of physical cores on your CPU - used to accelerate the construction of the CBM format.
        
 2. Run `./scripts/validate.sh` inside the `CBM-CPU/` direction.
 

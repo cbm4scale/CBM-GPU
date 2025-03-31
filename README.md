@@ -1,7 +1,7 @@
 # CBM-GPU
 Implementation of the CBM format matrix multiplication kernels in CUDA and cuSPARSE.
 
-> **Note:** This repository requires refactoring, and in the future will be merged with CBM-CPU. 
+> **Note:** This repository requires refactoring, and in the future it will be merged with CBM-CPU. 
 
 ## Setup
 

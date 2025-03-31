@@ -17,7 +17,6 @@ extra_compile_args = [
     '-march=native',
     '-O2',
     '-std=c++20',
-    '-I/home/alves/arbok/source/arbok/include',
     f'-I{os.path.dirname(os.path.abspath(__file__))}/../arbok/source/arbok/include',
 ]
 
@@ -32,8 +31,6 @@ extra_link_args = [
     '-lpthread',
     '-lm',
     '-ldl',
-    '-L/home/alves/arbok/build/',
-    '-larbok',
     f'-L{os.path.dirname(os.path.abspath(__file__))}/../arbok/build/',
     '-larbok',
 ]

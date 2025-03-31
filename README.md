@@ -27,8 +27,6 @@
    git submodule init
    git submodule update
    python setup.py
-   python setup_cbm_cusparse.py
-   python setup_csr_cusparse.py
    export LD_LIBRARY_PATH=./arbok/build/:$LD_LIBRARY_PATH
    export PYTHONPATH=./:$PYTHONPATH
    ```

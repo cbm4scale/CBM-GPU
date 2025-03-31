@@ -1,4 +1,7 @@
 # CBM-GPU
+Implementation of the CBM format matrix multiplication kernels in CUDA and cuSPARSE.
+
+> **Note:** This repository requires refactoring, and in the future will be merged with CBM-CPU. 
 
 ## Setup
 
@@ -30,3 +33,73 @@
    export LD_LIBRARY_PATH=./arbok/build/:$LD_LIBRARY_PATH
    export PYTHONPATH=./:$PYTHONPATH
    ```
+## Usage
+
+### `./scripts/matmul.sh`
+This script evaluates the performance of different matrix multiplication methods with both CBM and CSR formats using:  
+   - `cbm/cbm4{mm,ad,dad}.py` and `cbm/mkl4{mm,ad,dad}.py` via `benchmark/benchmark_matmul.py`.
+   - The alpha values used to convert the dataset to CBM format are defined in `benchmark/utilities.py`.
+
+Upon completion, the script generates a results file named `results/matmul_results.txt`, which records time related metrics for matrix multiplication.
+
+> **Note:** `cbm/cbm4ad.py` and `cbm/mkl4ad.py` contain python classes to store matrix **A** @ **D^(-1/2)** in CBM and CSR format, and support matrix products of the form **A** @ **D^(-1/2)** @ **X**.
+> Here, **A** is the adjacency matrix of the dataset, **D** is the diagonal degree matrix of **A**, and **X** is a dense real-valued matrix. 
+
+> **Note:** `cbm/cbm4dad.py` and `cbm/mkl4dad.py` contain python classes to store matrix **D^(-1/2)** @ **A** @ **D^(-1/2)** in CBM and CSR format, and support matrix products of the form **D^(-1/2)** @ **A** @ **D^(-1/2)** @ **X**.
+> Here, **A** is the adjacency matrix of the dataset, **D** is the diagonal degree matrix of **A**, and **X** is a dense real-valued matrix. 
+
+
+#### How to Run:
+1. Open the `scripts/matmul.sh` and modify the following variables:
+   - `MAX_THREADS=...`  
+     Set this variable to the maximum number of physical cores on your machine.
+   - `THREADS=(...)`  
+     Include in this array the specific thread counts you want to experiment with.  
+
+2. Run `./scripts/matmul.sh` inside the `CBM-CPU/` direction.  
+
+Other configuration options (use default values to reproduce our experiments):    
+   - `DATASETS=(...)`  
+       Include in this array the datasets that should be considered..  
+   
+   - `NCOLUMNS=(...)`  
+        Include in this array the number of columns (of the random operand matrices) you want to experiment with.
+     
+   - `ITERATIONS=(...)`  
+        Include in this array the number of matrix multiplications to be measured.
+
+   - `WARMUPS=(...)`  
+        Include in this array the number of warmup iterations to be run before recording starts.
+
+
+### `./scripts/validate.sh`
+This script validates the correction different matrix multiplication methods with CBM formats using: 
+- `cbm/cbm4{mm,ad,dad}.py` via `benchmark/benchmark_matmul.py`.
+
+This validation is performed by comparing the resulting matrices (element-wise) between the classes mentioned above and `cbm/mkl4{mm,ad,dad}.py`.
+Again, the alpha values used are the ones set in `benchmark/utilities.py`.
+
+#### How to Run:
+1. Open the `scripts/validate.sh` and modify the following variables:
+   - `MAX_THREADS=...`  
+     Set this variable to the maximum number of physical cores on your machine.
+   - `THREADS=(...)`  
+     Include in this array the specific thread counts you want to experiment with.  
+       
+2. Run `./scripts/validate.sh` inside the `CBM-CPU/` direction.
+
+Other configuration options (use default values to reproduce our experiments):  
+   - `DATASETS=(...)`  
+       Include in this array the datasets that should be considered..  
+   
+   - `NCOLUMNS=(...)`  
+        Include in this array the number of columns (of the random operand matrices) you want to experiment with.
+     
+   - `ITERATIONS=(...)`  
+        Include in this array the number of matrix multiplications to be measured.
+
+   - `RTOL=...`  
+        Specifies the relative tolerance interval to be considered during validation.
+
+   - `ATOL=...`  
+        Specifies the absolute tolerance interval to be considered in the validation.

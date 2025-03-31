@@ -3,16 +3,19 @@ from time import time
 from torch import inference_mode, empty, rand, testing, int32, float32, sparse_csr_tensor, cuda
 from utilities import load_dataset, set_adjacency_matrix
 
+import warnings
+warnings.simplefilter("ignore", UserWarning)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--nn", choices=["ax", "adx", "dadx"], required=True)
+    parser.add_argument("--operation", choices=["ax", "adx", "dadx"], required=True)
     parser.add_argument("--dataset", type=str, default="ca-HepPh")
-    parser.add_argument("--columns", type=int, help="Number of columns to use in X. If not set, the original number of columns will be used.")
-    parser.add_argument("--iterations", type=int, default=20, help="Number of matrix multiplications.")
-    parser.add_argument("--alpha", type=int, help="Overwrite default alpha value for the adjacency matrix.")
-    parser.add_argument("--atol", type=float, default=0)
-    parser.add_argument("--rtol", type=float, default=1e-5)
+    parser.add_argument("--columns", type=int, default=512, help="Overwrites default number of columns in matrix 'x'.")
+    parser.add_argument("--iterations", type=int, default=50, help="Overwrites default number of matrix multiplications tests.")
+    parser.add_argument("--alpha", type=int, help="Overwrites default alpha value for the adjacency matrix.")
+    parser.add_argument("--atol", type=float, default=0, help="Overwrites default absolute tolerance.")
+    parser.add_argument("--rtol", type=float, default=1e-5, help="Overwrites default relative tolerance.")
     args = parser.parse_args()
 
     # dataset
@@ -22,8 +25,8 @@ if __name__ == '__main__':
         alpha = args.alpha
     
     # adjacency matrix
-    cbm_a, _ = set_adjacency_matrix(f"cbm-{args.nn}", dataset.edge_index, alpha)
-    csr_a, _ = set_adjacency_matrix(f"csr-{args.nn}", dataset.edge_index, alpha)
+    cbm_a, _ = set_adjacency_matrix(f"cbm-{args.operation}", dataset.edge_index, alpha)
+    csr_a, _ = set_adjacency_matrix(f"csr-{args.operation}", dataset.edge_index, alpha)
 
     del dataset.edge_index
 
@@ -32,7 +35,8 @@ if __name__ == '__main__':
     pyg_y = empty((dataset.num_nodes, args.columns if args.columns else dataset.num_features), dtype=float32, device="cuda")    # this doesn't need to be done here but if we want to vary the number of columns, we need to create a new empty tensor
 
     x = empty((dataset.num_nodes, args.columns), dtype=float32, device='cuda')
-
+    passed_tests=0
+    failed_tests=0
     print("------------------------------------------------------------")
     with inference_mode():
         for iteration in range(1, args.iterations + 1):
@@ -53,21 +57,8 @@ if __name__ == '__main__':
             try:
                 testing.assert_close(csr_y, cbm_y, atol=args.atol, rtol=args.rtol)
                 testing.assert_close(csr_y, pyg_y, atol=args.atol, rtol=args.rtol)
-                print(f"[{iteration}/{args.iterations}] PASSED")
+                passed_tests += 1
             except AssertionError as e:
-                print(f"[{iteration}/{args.iterations}] FAILED: {e}")
-            print("------------------------------------------------------------")
+                failed_tests += 0
 
-    # Check if CUDA is available
-    if cuda.is_available():
-        gpu_id = cuda.current_device()  # Get the active GPU ID
-        total_mem = cuda.get_device_properties(gpu_id).total_memory  # Total memory in bytes
-        allocated_mem = cuda.memory_allocated(gpu_id)  # Memory currently allocated by PyTorch
-        cached_mem = cuda.memory_reserved(gpu_id)  # Memory reserved by PyTorch's caching allocator
-
-        print(f"GPU: {cuda.get_device_name(gpu_id)}")
-        print(f"Total Memory: {total_mem / 1024**3:.2f} GB")
-        print(f"Allocated Memory: {allocated_mem / 1024**3:.2f} GB")
-        print(f"Cached Memory: {cached_mem / 1024**3:.2f} GB")
-    else:
-        print("CUDA is not available.")
+    print(f"Passed: {passed_tests} | Failed: {failed_tests}")

@@ -57,11 +57,6 @@ def print_dataset_info(name, dataset):
     print(f'Dataset: {name}')
     print(f'Number of Nodes: {dataset.num_nodes}')
     print(f'Number of Edges: {dataset.num_edges}')
-    print(f'Number of Nodes Features: {dataset.num_features}')
-    print(f'Number of Edges Features: {dataset.num_edge_features}')
-    print(f'Number of Classes: {dataset.num_classes}')
-    print(f'X: {dataset.x.shape if dataset.x is not None else None}')
-    print(f'Y: {dataset.y.shape if dataset.y is not None else None}')
     print('------------------------------------------------------')
 
 def load_tudataset(name, task):     # graph and node prediction
@@ -90,7 +85,7 @@ def load_tudataset(name, task):     # graph and node prediction
     elif task == "graph":
         dataset.num_classes = dataset.y.unique().size(0)
     
-    print_dataset_info(name, dataset)
+    
     
     return dataset
 
@@ -109,7 +104,7 @@ def load_snap(name):      # node prediction
     y[arange(dataset.num_nodes), randint(0, dataset.num_classes, (dataset.num_nodes,))] = 1
     dataset.y = y
     
-    print_dataset_info(name, dataset)
+    
 
     return dataset
 
@@ -158,7 +153,7 @@ def load_planetoid(name):       # node prediction
     dataset.num_classes = dataset.y.unique().size(0)
     dataset.y = one_hot(dataset.y, num_classes=dataset.num_classes).to(float32)
     
-    print_dataset_info(name, dataset)
+    
 
     return dataset
 
@@ -178,38 +173,27 @@ def load_dimacs(name):      # node prediction
     y = zeros((dataset.num_nodes, dataset.num_classes), dtype=float32)
     y[arange(dataset.num_nodes), randint(0, dataset.num_classes, (dataset.num_nodes,))] = 1
     dataset.y = y
-    
-    print_dataset_info(name, dataset)
+
 
     return dataset
 
 
 def load_dataset(name):
     if name == "ca-HepPh":
-        return load_snap("ca-HepPh"), 4
-        #return load_snap("ca-HepPh"), 1
+        return load_snap("ca-HepPh"), 32
     elif name == "ca-AstroPh":
-        return load_snap("ca-AstroPh"), 2
-        #return load_snap("ca-AstroPh"), 8
-    elif name == "ogbn-proteins-ignore":
-        return load_ogbn_proteins('all', None), #16
+        return load_snap("ca-AstroPh"), 32
     elif name == "ogbn-proteins-raw":
-        return load_ogbn_proteins(None, None), 8 #16
-        #return load_ogbn_proteins(None, None), 1 #16
+        return load_ogbn_proteins(None, None), 32
     elif name == "PubMed":
-        return load_planetoid("PubMed"), 4
-        #return load_planetoid("PubMed"), 16 #32
+        return load_planetoid("PubMed"), 32
     elif name == "Cora":
-        return load_planetoid("Cora"), 2 #32
-        #return load_planetoid("Cora"), 4 #32
+        return load_planetoid("Cora"), 32
     elif name == "coPapersCiteseer":
-        return load_dimacs("coPapersCiteseer"), 4
-        #return load_dimacs("coPapersCiteseer"), 32
+        return load_dimacs("coPapersCiteseer"), 32
     elif name == "coPapersDBLP":
-        return load_dimacs("coPapersDBLP"), 4 #16
-        #return load_dimacs("coPapersDBLP"), 32 #16
+        return load_dimacs("coPapersDBLP"), 32
     elif name == "COLLAB":
-        return load_tudataset("COLLAB", "node"), 4
-        #return load_tudataset("COLLAB", "node"), 16
+        return load_tudataset("COLLAB", "node"), 32
     else:
         raise NotImplementedError(f"Dataset {name} is not valid")

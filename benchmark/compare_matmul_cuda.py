@@ -30,9 +30,9 @@ if __name__ == '__main__':
 
     del dataset.edge_index
 
-    cbm_y = empty((dataset.num_nodes, args.columns if args.columns else dataset.num_features), dtype=float32, device="cuda")    # this doesn't need to be done here but if we want to vary the number of columns, we need to create a new empty tensor
-    csr_y = empty((dataset.num_nodes, args.columns if args.columns else dataset.num_features), dtype=float32, device="cuda")    # this doesn't need to be done here but if we want to vary the number of columns, we need to create a new empty tensor
-    pyg_y = empty((dataset.num_nodes, args.columns if args.columns else dataset.num_features), dtype=float32, device="cuda")    # this doesn't need to be done here but if we want to vary the number of columns, we need to create a new empty tensor
+    cbm_y = empty((dataset.num_nodes, args.columns), dtype=float32, device="cuda")    # this doesn't need to be done here but if we want to vary the number of columns, we need to create a new empty tensor
+    csr_y = empty((dataset.num_nodes, args.columns), dtype=float32, device="cuda")    # this doesn't need to be done here but if we want to vary the number of columns, we need to create a new empty tensor
+    pyg_y = empty((dataset.num_nodes, args.columns), dtype=float32, device="cuda")    # this doesn't need to be done here but if we want to vary the number of columns, we need to create a new empty tensor
 
     x = empty((dataset.num_nodes, args.columns), dtype=float32, device='cuda')
     passed_tests=0

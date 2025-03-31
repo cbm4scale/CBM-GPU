@@ -26,7 +26,7 @@
    cd CBM-GPU/
    git submodule init
    git submodule update
-   python setup.py
+   python setup.py  # If Intel oneAPI is not installed in the default directory, use: --setvars_path PATH_TO_ONEAPI/setvars.sh
    export LD_LIBRARY_PATH=./arbok/build/:$LD_LIBRARY_PATH
    export PYTHONPATH=./:$PYTHONPATH
    ```

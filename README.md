@@ -1,6 +1,8 @@
 # CBM-GPU
 Implementation of the CBM format matrix multiplication kernels in CUDA and cuSPARSE.
 
+This repository also contains a preliminary implementation of the clustering algorithm described in the final report of the CBM4Scale project. 
+
 > **Note:** This repository requires refactoring, and in the future it will be merged with CBM-CPU. 
 
 ## Setup
@@ -54,7 +56,7 @@ Upon completion, the script generates a results file named `results/matmul_resul
    - `MAX_THREADS=...`  
      Set this variable to the maximum number of physical cores on your CPU - used to accelerate the construction of the CBM format.
    
-2. Run `./scripts/matmul.sh` inside the `CBM-CPU/` direction.  
+2. Run `./scripts/matmul.sh` inside the `CBM-GPU/` directory.  
 
 Other configuration options (use default values to reproduce our experiments):    
    - `DATASETS=(...)`  
@@ -82,7 +84,7 @@ Again, the alpha values used are the ones set in `benchmark/utilities.py`.
    - `MAX_THREADS=...`  
      Set this variable to the maximum number of physical cores on your CPU - used to accelerate the construction of the CBM format.
        
-2. Run `./scripts/validate.sh` inside the `CBM-CPU/` direction.
+2. Run `./scripts/validate.sh` inside the `CBM-GPU/` directory.
 
 Other configuration options (use default values to reproduce our experiments):  
    - `DATASETS=(...)`  
@@ -99,3 +101,25 @@ Other configuration options (use default values to reproduce our experiments):
 
    - `ATOL=...`  
         Specifies the absolute tolerance interval to be considered in the validation.
+
+### `./benchmark/clustering_gpu.py`
+This script uses hierarchical Locality-Sensitive Hashing to similar rows of the dataset. 
+
+Then each cluster is represented in CBM format and compression metrics are extracted.
+
+#### How to Run:
+       
+Run `python /benchmark/clustering_gpu.py` inside `CBM-GPU/` directory, and provide the following flags:
+
+- `--dataset [dataset]` sets default dataset to `[dataset]`.
+
+- `--max_cluster_size [cluster-size]`
+  sets default maximum cluster size to `[cluster-size]`.
+
+- `--hashing_functions [num-hashes]`
+  sets default number of hashing function to `[num-hashes]`.
+
+> **Note:** set OpenMP environment variables to parallelize the convertion of each cluster into CBM format. 
+
+
+  

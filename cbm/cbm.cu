@@ -56,25 +56,6 @@ __global__ void update (float *dst,
     }
 }
 
-//    // get block and thread id's
-//    //const int32_t bid = blockIdx.x;
-//    const int32_t tid = threadIdx.x;
-//    // called bid for lack of a better name, matches first block of each row
-//    const int32_t bid = blockIdx.x / ((stride + blockDim.x - 1) / blockDim.x);
-//    
-//    // block "bid" get branch "bid"
-//    const int32_t s_ptr = mca_branches[bid]; //d_mca_branches[bid];
-//    const int32_t e_ptr = mca_branches[bid + 1];
-//
-//    for (int edge = s_ptr; edge < e_ptr; edge++) {
-//        int32_t src_edge = mca_src_node_idx[edge];   // row to be added
-//        int32_t dst_edge = mca_dst_node_idx[edge];   // resulting row
-//        int32_t src_idx = (src_edge * stride) + tid;
-//        int32_t dst_idx = (dst_edge * stride) + tid;
-//
-//        dst[dst_idx] += dst[src_idx];
-//    }
-
 __global__ void fused_update (float *dst,
                               const int32_t stride,
                               const int32_t *mca_branches,
@@ -163,7 +144,6 @@ public:
     ~cusparseCBM() {
         CHECK_CUSPARSE( cusparseDestroy(handle_) )
         CHECK_CUSPARSE( cusparseDestroySpMat(descr_) )
-        printf("destroying cbm instance on GPU...\n");
     }
 
     // matmul method for AX and ADX
